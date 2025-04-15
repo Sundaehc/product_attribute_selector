@@ -3,15 +3,10 @@ import base64
 import logging
 from typing import List, Dict, Any, Optional, Tuple
 import datetime
-
-try:
-    import cv2
-    import numpy as np
-    from PIL import Image
-    from io import BytesIO
-except ImportError:
-    logging.warning("缺少图像处理相关依赖，请安装: pip install opencv-python pillow numpy")
-
+import cv2
+import numpy as np
+from PIL import Image
+from io import BytesIO
 from config import ZHIPUAI_CONFIG, IMAGE_CONFIG, ATTRIBUTE_MATCHING
 from zhipuai_utils import call_zhipu_llm, analyze_image_with_zhipu
 
