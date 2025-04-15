@@ -164,7 +164,6 @@ class AttributeSelector:
     
     def _process_season_attribute(self, attribute_name: str, available_values: List[str]) -> str:
         """处理季节相关属性"""
-        # 上市年份季节需要包含年份
         if "上市年份" in attribute_name:
             current_year = str(datetime.datetime.now().year)
             current_season = get_current_season()
@@ -185,15 +184,12 @@ class AttributeSelector:
             """
             return call_llm(prompt)
         else:
-            # 普通季节属性
             next_season = get_next_season()
             
-            # 直接匹配
             for value in available_values:
                 if next_season in value:
                     return value
             
-            # 如果没有直接匹配，使用LLM选择最接近的
             return find_best_value_match(next_season, available_values)
     
     def _process_material_attribute(self, product_number: str, attribute_name: str, available_values: List[str]) -> str:
@@ -202,7 +198,6 @@ class AttributeSelector:
         product_data = self.db.get_product_data(product_number, ["材质", "鞋面材质", "帮面材质", attribute_name])
         
         material = ""
-        # 按优先级顺序尝试获取材质信息
         if attribute_name in product_data:
             material = product_data[attribute_name]
         elif "鞋面材质" in product_data:
