@@ -28,12 +28,6 @@ class AttributeSelector:
     """产品属性选择器"""
     
     def __init__(self, db_connection=None):
-        """
-        初始化属性选择器
-        
-        Args:
-            db_connection: 数据库连接对象，如果为None则创建新连接
-        """
         self.db = db_connection or ProductDatabase()
         
     def select_attribute_value(self, 
