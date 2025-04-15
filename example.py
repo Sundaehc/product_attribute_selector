@@ -121,7 +121,7 @@ def main():
     print("-" * 50)
     
     # 示例7: 处理靴筒高度
-    product_number = "KC251001DA73"
+    product_number = "123456"
     attribute_name = "靴筒高度"
     available_values = ["低筒(10cm以下)", "中筒(10-20cm)", "高筒(20-40cm)", "过膝靴(40cm以上)"]
     image_path = None
@@ -140,5 +140,5 @@ def main():
     # 关闭数据库连接
     selector.db.close()
 
-if __name__ == "__main__":
+if __name__ == "__main__": 
     main() 
