@@ -229,7 +229,7 @@ def clean_attribute_value(value: str) -> str:
         return ""
         
     # 移除常见的干扰词和格式
-    value = value.replace("材质：", "").replace("颜色：", "").strip()
+    value = value.replace("材质：", "").strip()
     value = value.replace("主要成分：", "").replace("类型：", "").strip()
     
     # 移除额外的标点符号
