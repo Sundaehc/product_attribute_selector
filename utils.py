@@ -62,7 +62,7 @@ def analyze_image(image_path: str, analysis_type: str) -> str:
         
         # 根据分析类型构建提示词
         prompts = {
-            "closure_type": "这双鞋的闭合方式是什么（如系带、拉链、一脚蹬、魔术贴等）？请只回答闭合方式，不要有其他内容。",
+            "closure_type": "这双鞋的闭合方式是什么（如系带、拉链、一脚蹬、魔术贴等)？请只回答闭合方式，不要有其他内容。",
             "shoe_toe_style": "这双鞋的鞋头款式是什么（如圆头、尖头、方头等）？请只回答鞋头款式，不要有其他内容。",
         }
         

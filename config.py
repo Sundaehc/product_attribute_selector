@@ -6,7 +6,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # 数据库配置
 DB_CONFIG = {
     "mysql": {
-        "host": "your_host",
+        "host": "localhost",
         "port": 3306,
         "user": "your_username",
         "password": "your_password",
@@ -17,7 +17,7 @@ DB_CONFIG = {
 
 # 智谱AI API配置
 ZHIPUAI_CONFIG = {
-    "api_key": "your_apikey",
+    "api_key": "your_api_key",
     "default_model": "glm-4",  
     "vision_model": "glm-4v",  
     "base_url": "https://open.bigmodel.cn/api/paas/v4", 

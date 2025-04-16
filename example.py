@@ -6,13 +6,13 @@ from attribute_selector import AttributeSelector
 # 配置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
-
+PRODUCT_NUMBER = "123456"
 def main():
     # 创建属性选择器实例
     selector = AttributeSelector()
     
     # 示例1: 处理季节属性
-    product_number = "123456"
+    product_number = PRODUCT_NUMBER
     attribute_name = "季节"
     available_values = ["春季", "夏季", "秋季", "冬季", "四季"]
     image_path = None  # 不需要图片
@@ -29,7 +29,7 @@ def main():
     print("-" * 50)
     
     # 示例2: 处理季节属性
-    product_number = "123456"
+    product_number = PRODUCT_NUMBER
     attribute_name = "上市年份季节"
     available_values = ["春季", "夏季", "秋季", "冬季", "四季"]
     image_path = None  # 不需要图片
@@ -46,7 +46,7 @@ def main():
     print("-" * 50)
     
     # 示例3: 处理材质属性
-    product_number = "123456"
+    product_number = PRODUCT_NUMBER
     attribute_name = "靴筒材质"
     available_values = ['乙纶', '二层牛皮（除牛反绒）', '二层猪皮', '头层牛皮（除牛反绒）', '头层猪皮', '孔雀皮', '多种材质拼接', '牛剖层革', '牛反绒', '牛皮', '牛皮革', '牛皮革+织物', '珍珠鱼皮', '皮革', '磨砂皮', '织物', '织物配皮', '羊反绒（羊猄）', '羊皮（除羊反绒/羊猄）', '羊驼皮', '腹膜皮', '超纤', '高丝光反绒皮', '鳗鱼皮', '羊皮（除羊反绒，羊猄）', '袋鼠皮', '帆布', '马皮', '漆皮', '麂皮', '胶皮', '鹿皮', '鸵鸟皮', '鳄鱼皮', '蜥蜴皮', '蛇皮', '太空革', 'PU', '羊皮毛一体', '绸缎', '绒面', '棉布', '亮片布', '灯芯绒', '网布', '塑胶', '藤草', '毛线', '牛仔布', '牛皮绒面革']
     image_path = None  # 这个示例中假设数据库中有材质信息
@@ -64,10 +64,10 @@ def main():
     
     # 示例4: 处理闭合方式属性(需要图片分析)
     # 确保有测试图片，否则会报错或返回空结果
-    product_number = "123456"
+    product_number = PRODUCT_NUMBER
     attribute_name = "闭合方式"
-    available_values = ["系带", "魔术贴", "拉链", "套脚", "扣带", "松紧带"]
-    image_path = "test_img.jpg"  # 确保此图片存在
+    available_values = ['系带', '拉链', '搭扣', '其他', '套筒', '魔术贴']
+    image_path = "A20407315X01.jpg"  # 确保此图片存在
     
     # 检查图片是否存在
     if not os.path.exists(image_path):
@@ -87,7 +87,7 @@ def main():
     print("-" * 50)
     
     # 示例5: 处理同义属性名称
-    product_number = "123456"
+    product_number = PRODUCT_NUMBER
     attribute_name = "靴筒材质"  
     available_values =['乙纶', '二层牛皮（除牛反绒）', '二层猪皮', '头层牛皮（除牛反绒）', '头层猪皮', '孔雀皮', '多种材质拼接', '牛剖层革', '牛反绒', '牛皮', '牛皮革', '牛皮革+织物', '珍珠鱼皮', '皮革', '磨砂皮', '织物', '织物配皮', '羊反绒（羊猄）', '羊皮（除羊反绒/羊猄）', '羊驼皮', '腹膜皮', '超纤', '高丝光反绒皮', '鳗鱼皮', '羊皮（除羊反绒，羊猄）', '袋鼠皮', '帆布', '马皮', '漆皮', '麂皮', '胶皮', '鹿皮', '鸵鸟皮', '鳄鱼皮', '蜥蜴皮', '蛇皮', '太空革', 'PU', '羊皮毛一体', '绸缎', '绒面', '棉布', '亮片布', '灯芯绒', '网布', '塑胶', '藤草', '毛线', '牛仔布', '牛皮绒面革']
     image_path = None
@@ -104,7 +104,7 @@ def main():
     print("-" * 50)
     
     # 示例6: 处理尺寸相关属性
-    product_number = "123456"
+    product_number = PRODUCT_NUMBER
     attribute_name = "后跟高"
     available_values = ["平跟(小于1cm)", "低跟(1-3cm)", "中跟(3-5cm)", "高跟(5-8cm)", "超高跟(8cm以上)"]
     image_path = None
@@ -121,7 +121,7 @@ def main():
     print("-" * 50)
     
     # 示例7: 处理靴筒高度
-    product_number = "123456"
+    product_number = PRODUCT_NUMBER
     attribute_name = "靴筒高度"
     available_values = ["低筒(10cm以下)", "中筒(10-20cm)", "高筒(20-40cm)", "过膝靴(40cm以上)"]
     image_path = None
