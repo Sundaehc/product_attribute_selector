@@ -67,7 +67,7 @@ def main():
     product_number = PRODUCT_NUMBER
     attribute_name = "闭合方式"
     available_values = ['系带', '拉链', '搭扣', '其他', '套筒', '魔术贴']
-    image_path = "A20407315X01.jpg"  # 确保此图片存在
+    image_path = "test_img.jpg"  # 确保此图片存在
     
     # 检查图片是否存在
     if not os.path.exists(image_path):
