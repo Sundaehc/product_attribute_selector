@@ -6,7 +6,7 @@ from attribute_selector import AttributeSelector
 # 配置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
-PRODUCT_NUMBER = "123456"
+PRODUCT_NUMBER = "C2152177L42"
 def main():
     # 创建属性选择器实例
     selector = AttributeSelector()
