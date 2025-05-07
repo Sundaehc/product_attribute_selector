@@ -15,7 +15,7 @@ DB_CONFIG = {
     }
 }
 
-# 智谱AI API配置
+# API配置
 OPENAI_CONFIG = {
     "api_key": "your_api_key",
     "default_model": "glm-4",  
