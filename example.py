@@ -14,7 +14,7 @@ def main():
     # product_number = PRODUCT_NUMBER
     # attribute_name = "季节"
     # available_values = ["春季", "夏季", "秋季", "冬季", "四季"]
-    # image_path = None  # 不需要图片
+    # image_path = None  
     
     # result = selector.select_attribute_value(
     #     product_number,
@@ -48,7 +48,7 @@ def main():
     product_number = PRODUCT_NUMBER
     attribute_name = "鞋底材质"
     available_values = ['袋鼠皮', '袋鼠皮革', '鳄鱼皮革', '猪皮革', '黄牛皮', '黄牛皮革', '麂 皮革', '鹿皮革', '驴皮', '驴皮革', '骡皮', '骡皮革', '马皮革', '蟒皮', '蟒皮革', '水牛皮', '水牛皮革', '小牛皮', '鸵鸟皮', '鸵鸟皮革', ' 小牛皮革', '羊羔皮', '羊羔皮革', '羊皮革', '鱼皮', '鱼皮革', '山羊皮', '山羊皮革', '蛇皮革', '聚丙烯', 'PP', '牦牛皮', '犏牛皮', '牛皮革', '牦牛皮革', '绵羊皮', '绵羊皮革', '犏牛皮革', 'EVA', '聚氨酯', '木', '塑料', '塑胶', 'TPU', '橡胶', 'tpu', 'PVC', '千层底', '橡胶发泡', 'EVA发泡胶', '真皮', '泡沫', '复合底', 'MD', 'TPR(牛筋）']
-    image_path = None  
+    image_path = None 
     
     result = selector.select_attribute_value(
         product_number,
@@ -66,7 +66,7 @@ def main():
     # product_number = PRODUCT_NUMBER
     # attribute_name = "闭合方式"
     # available_values = ['系带', '拉链', '搭扣', '其他', '套筒', '魔术贴']
-    # image_path = r"\\192.168.10.229\图片\伊伴女鞋\已完成\2025\4.1\20250401（海燕）\EF242417S\唯品\EF242417S09\30.png"  # 确保此图片存在
+    # image_path = None  # 确保此图片存在
     
     # # 检查图片是否存在
     # if not os.path.exists(image_path):

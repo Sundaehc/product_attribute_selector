@@ -8,9 +8,9 @@ DB_CONFIG = {
     "mysql": {
         "host": "localhost",
         "port": 3306,
-        "user": "user",
-        "password": "password",
-        "database": "model_db",
+        "user": "",
+        "password": "",
+        "database": "",
         "charset": "utf8mb4"
     }
 }
