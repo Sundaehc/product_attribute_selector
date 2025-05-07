@@ -1,37 +1,33 @@
-import os
 import base64
 import logging
-import json
-import requests
 import time
-from typing import List, Dict, Any, Optional, Union
-
-from config import ZHIPUAI_CONFIG
+import requests
+from openai import OpenAI
+from typing import  Optional, List, Dict, Any
+from config import OPENAI_CONFIG
 
 logger = logging.getLogger(__name__)
 
 
-class ZhipuAI:
-    """智谱AI API客户端"""
+class OpenAI:
+    """OpenAI API客户端"""
     
     def __init__(self, api_key=None, base_url=None):
         """
-        初始化智谱AI客户端
+        初始化OpenAI客户端
         
         Args:
             api_key: API密钥，如不提供则从配置中获取
             base_url: API基础URL，如不提供则从配置中获取
         """
-        self.api_key = api_key or ZHIPUAI_CONFIG["api_key"]
-        self.base_url = base_url or ZHIPUAI_CONFIG["base_url"]
+        self.api_key = api_key or OPENAI_CONFIG["api_key"]
+        self.base_url = base_url or OPENAI_CONFIG["base_url"]
         self.chat = ChatCompletions(self.api_key, self.base_url)
 
 
 class ChatCompletions:
-    """智谱AI聊天接口"""
     
     def __init__(self, api_key, base_url):
-        """初始化聊天接口"""
         self.api_key = api_key
         self.base_url = base_url
         
@@ -52,7 +48,7 @@ class ChatCompletions:
             **kwargs: 其他参数，如temperature等
             
         Returns:
-            Dict[str, Any]: 智谱AI响应结果
+            Dict[str, Any]: OpenAI响应结果
         """
         url = f"{self.base_url}/chat/completions"
         
@@ -97,7 +93,7 @@ class ChatCompletions:
             return transformed_response
             
         except Exception as e:
-            logger.error(f"智谱AI API调用失败: {e}")
+            logger.error(f"OpenAI API调用失败: {e}")
             # 返回一个空响应结构以保持接口一致性
             return {
                 "id": "",
@@ -137,9 +133,9 @@ def encode_image_to_base64(image_path: str) -> Optional[str]:
         return None
 
 
-def call_zhipu_llm(prompt: str, system_prompt: str = None, model: str = None) -> str:
+def call_openai_llm(prompt: str, system_prompt: str = None, model: str = None) -> str:
     """
-    调用智谱AI大语言模型
+    调用OpenAI大语言模型
     
     Args:
         prompt: 用户提示词
@@ -151,7 +147,7 @@ def call_zhipu_llm(prompt: str, system_prompt: str = None, model: str = None) ->
     """
     try:
         if model is None:
-            model = ZHIPUAI_CONFIG["default_model"]
+            model = OPENAI_CONFIG["default_model"]
             
         messages = []
         
@@ -163,28 +159,30 @@ def call_zhipu_llm(prompt: str, system_prompt: str = None, model: str = None) ->
         messages.append({"role": "user", "content": prompt})
         
         # 初始化客户端
-        client = ZhipuAI()
+        client = OpenAI(
+            api_key=OPENAI_CONFIG["api_key"],
+            base_url=OPENAI_CONFIG["base_url"]
+        )
         
         # 发送请求
         response = client.chat.create(
             model=model,
             messages=messages,
-            temperature=0.3,
-            max_tokens=150
+            temperature=0.0,
+            max_tokens=1000
         )
         
-        # 返回结果
-        result = response['choices'][0]['message']['content']
+        result = response["choices"][0]["message"]["content"]
         return result.strip()
         
     except Exception as e:
-        logger.error(f"智谱AI调用失败: {e}")
+        logger.error(f"OpenAI调用失败: {e}")
         return ""
 
 
-def analyze_image_with_zhipu(image_path: str, prompt: str) -> str:
+def analyze_image_with_openai(image_path: str, prompt: str) -> str:
     """
-    使用智谱AI分析图片
+    使用OpenAI分析图片
     
     Args:
         image_path: 图片路径
@@ -216,19 +214,21 @@ def analyze_image_with_zhipu(image_path: str, prompt: str) -> str:
         ]
         
         # 初始化客户端
-        client = ZhipuAI()
+        client = OpenAI(
+            api_key=OPENAI_CONFIG["api_key"],
+            base_url=OPENAI_CONFIG["base_url"]
+        )
         
-        # 调用智谱AI视觉模型
+        # 调用OpenAI视觉模型
         response = client.chat.create(
-            model=ZHIPUAI_CONFIG["vision_model"],
+            model=OPENAI_CONFIG["vision_model"],
             messages=messages,
             max_tokens=100
         )
         
-        # 返回结果
-        result = response['choices'][0]['message']['content']
+        result = response["choices"][0]["message"]["content"]
         return result.strip()
         
     except Exception as e:
-        logger.error(f"智谱AI图像分析失败: {e}")
+        logger.error(f"OpenAI图像分析失败: {e}")
         return "" 

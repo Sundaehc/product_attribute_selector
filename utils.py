@@ -1,17 +1,15 @@
 import os
-import base64
 import logging
-from typing import List, Dict, Any, Optional, Tuple
+from typing import List
 import datetime
-import cv2
-import numpy as np
-from PIL import Image
-from io import BytesIO
-from config import ZHIPUAI_CONFIG, IMAGE_CONFIG, ATTRIBUTE_MATCHING
-from zhipuai_utils import call_zhipu_llm, analyze_image_with_zhipu
+from sentence_transformers import SentenceTransformer, util
+from config import OPENAI_CONFIG, IMAGE_CONFIG, ATTRIBUTE_MATCHING
+from openai_utils import call_openai_llm, analyze_image_with_openai
 
 logger = logging.getLogger(__name__)
 
+# 加载模型
+model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
 
 def call_llm(prompt: str, system_prompt: str = None, model: str = None) -> str:
     """
@@ -30,9 +28,9 @@ def call_llm(prompt: str, system_prompt: str = None, model: str = None) -> str:
             system_prompt = "你是一个专业的电商产品属性分析助手，请简洁直接地回答问题，仅返回所需结果。"
             
         if model is None:
-            model = ZHIPUAI_CONFIG["default_model"]
+            model = OPENAI_CONFIG["default_model"]
             
-        return call_zhipu_llm(prompt, system_prompt, model)
+        return call_openai_llm(prompt, system_prompt, model)
     except Exception as e:
         logger.error(f"LLM调用失败: {e}")
         return ""
@@ -44,7 +42,7 @@ def analyze_image(image_path: str, analysis_type: str) -> str:
     
     Args:
         image_path: 图片路径
-        analysis_type: 分析类型 (color, closure_type, shoe_toe_style等)
+        analysis_type: 分析类型 (closure_type, shoe_toe_style, heel_shape， heel_height， opening_depth等)
         
     Returns:
         str: 分析结果
@@ -64,55 +62,22 @@ def analyze_image(image_path: str, analysis_type: str) -> str:
         prompts = {
             "closure_type": "这双鞋的闭合方式是什么（如系带、拉链、一脚蹬、魔术贴等)？请只回答闭合方式，不要有其他内容。",
             "shoe_toe_style": "这双鞋的鞋头款式是什么（如圆头、尖头、方头等）？请只回答鞋头款式，不要有其他内容。",
+            "heel_shape": "这双鞋的鞋跟款式是什么（如平跟、圆跟、方跟、尖跟、马蹄跟、坡跟、松糕跟、防水台等）？请只回答鞋跟款式，不要有其他内容。",
+            "heel_height": "这双鞋的鞋跟高度是多少（如低跟，平跟、中跟，高跟，超高跟等）？请只回答鞋跟高度，不要有其他内容。",
+            "opening_depth": "这双鞋的开口深度是多少（如浅口，中口，深口）？请只回答开口深度，不要有其他内容",
+            "style": "这双鞋的风格是什么（如少女风，田园风，民族风，休闲风，极简风，嘻哈风，洛丽塔风，公主风，舒适等）？请只回答风格，不要有其他内容。",
+            "shoe_shape": "这双鞋的款式是什么（如丁字鞋，布鞋，豆豆鞋，板鞋，穆勒鞋，玛丽珍鞋，懒人鞋，乐福鞋，摇摇鞋等）？请只回答款式，不要有其他内容。"
         }
         
         prompt = prompts.get(analysis_type, "描述这张图片的主要特征，请简洁回答。")
         
         # 使用智谱AI视觉模型分析图片
-        result = analyze_image_with_zhipu(image_path, prompt)
+        result = analyze_image_with_openai(image_path, prompt)
         logger.info(f"图片分析结果 ({analysis_type}): {result}")
         return result
     except Exception as e:
         logger.error(f"图片分析失败: {e}")
         return ""
-
-
-def find_best_attribute_match(attribute_name: str, available_attributes: List[str]) -> str:
-    """
-    在可用属性中找到与给定属性名称最匹配的属性
-    
-    Args:
-        attribute_name: 要匹配的属性名称
-        available_attributes: 可用的属性列表
-        
-    Returns:
-        str: 最匹配的属性名称
-    """
-    # 如果属性名称在可用属性中，直接返回
-    if attribute_name in available_attributes:
-        return attribute_name
-    
-    # 检查是否有预定义的别名映射
-    for main_attr, aliases in ATTRIBUTE_MATCHING["aliases"].items():
-        if attribute_name in aliases and main_attr in available_attributes:
-            return main_attr
-    
-    # 使用LLM进行语义匹配
-    prompt = f"""
-    在以下属性名称中，找出与"{attribute_name}"语义最接近或最相关的一项：
-    {', '.join(available_attributes)}
-    
-    请直接返回最匹配的属性名称，不要有其他内容。
-    """
-    
-    matched_attr = call_llm(prompt)
-    
-    # 确保匹配结果在可用属性中
-    if matched_attr in available_attributes:
-        return matched_attr
-    else:
-        # 找不到匹配项，返回原始属性名称
-        return attribute_name
 
 
 def find_best_value_match(query_value: str, available_values: List[str], attribute_type: str = None) -> str:
@@ -144,23 +109,36 @@ def find_best_value_match(query_value: str, available_values: List[str], attribu
             for alias in aliases:
                 if alias in query_value and standard_value in available_values:
                     return standard_value
-    
     # 使用LLM进行语义匹配
     prompt = f"""
-    在以下选项中，找出与"{query_value}"语义最接近或最相关的一项：
+    在以下选项中，找出与"{query_value}"语义最接近或最相关的一项, 如果"{query_value}"在以下选项中，请直接返回"{query_value}"，不要返回其他内容：
     {', '.join(available_values)}
     
     请直接返回最匹配的选项，不要有其他内容。
     """
     
     matched_value = call_llm(prompt)
+    logger.info(f"查询值: {query_value}")
+    logger.info(f"语义匹配结果: {matched_value}")
+    # 如果matched_value有多个值，调用模型重新进行语义匹配
+    if "," in matched_value:
+        # 输入词汇
+        input_word = query_value
+        candidate_words = available_values
+        # 生成嵌入
+        input_embedding = model.encode(input_word, convert_to_tensor=True)
+        candidate_embeddings = model.encode(candidate_words, convert_to_tensor=True)
+        # 计算余弦相似度
+        similarities = util.cos_sim(input_embedding, candidate_embeddings)[0]
+        # 找到最相似的词汇
+        max_index = similarities.argmax()
+        matched_value = candidate_words[max_index]
     
-    # 确保匹配结果在可用值中
     if matched_value in available_values:
         return matched_value
     else:
         # 尝试再次匹配或返回第一个选项
-        return available_values[0]
+        return ""
 
 
 def get_current_season() -> str:

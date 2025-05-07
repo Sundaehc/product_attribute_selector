@@ -6,20 +6,20 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # 数据库配置
 DB_CONFIG = {
     "mysql": {
-        "host": "192.168.10.207",
+        "host": "localhost",
         "port": 3306,
-        "user": "root",
-        "password": "111111",
+        "user": "user",
+        "password": "password",
         "database": "model_db",
         "charset": "utf8mb4"
     }
 }
 
 # 智谱AI API配置
-ZHIPUAI_CONFIG = {
-    "api_key": "b01a19b9d6be49baa154c9415313fa37.LOCPkh2ut5p70FsE",
+OPENAI_CONFIG = {
+    "api_key": "your_api_key",
     "default_model": "glm-4",  
-    "vision_model": "glm-4v",  
+    "vision_model": "glm-4v-plus-0111",  
     "base_url": "https://open.bigmodel.cn/api/paas/v4", 
 }
 
@@ -40,9 +40,15 @@ IMAGE_CONFIG = {
 ATTRIBUTE_MATCHING = {
     "aliases": {
         "鞋面材质": ["帮面材质", "靴筒面材质", "鞋帮材质"],
+        "鞋底材质": ["鞋底材质", "鞋底材料", "鞋底材料类型"],
+        "鞋垫材质": ["鞋垫材质", "鞋垫材料", "鞋垫材料类型"],
         "内里材质": ["鞋面内里材质", "靴筒内里材质"],
         "闭合方式": ["鞋子闭合方式", "鞋扣方式"],
+        "开口深度": ["开口深度", "开口大小"],
+        "风格": ["鞋子风格"],
+        "款式": ["鞋子款式"],
         "鞋头款式": ["鞋头样式", "鞋尖样式"],
+        "鞋跟款式": ["鞋跟样式", "后跟样式"],
         "季节": ["适用季节", "使用季节", "上市年份季节"],
         "后跟高": ["鞋跟高度", "跟高", "鞋后跟高度"],
         "靴筒高度": ["靴筒高", "筒高"],
@@ -53,7 +59,7 @@ ATTRIBUTE_MATCHING = {
         "材质": {
             "真皮": ["头层牛皮", "牛皮", "真牛皮", "二层牛皮(除牛反绒)","二层猪皮"],
             "人造革": ["PU", "PU革", "合成革", "人工革"],
-            "织物": ["布料", "纺织物", "网布"],
+            "织物": ["布料", "纺织物","纺织"],
         },
         "闭合方式": {
             "系带": ["鞋带", "系鞋带"],

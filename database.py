@@ -1,6 +1,5 @@
 import logging
-from typing import Dict, List, Any, Optional
-import os
+from typing import Dict, List, Any
 import mysql.connector
 from mysql.connector import Error
 from config import DB_CONFIG
@@ -13,9 +12,9 @@ class ProductDatabase:
     def __init__(self, config=None):
         self.config = config or DB_CONFIG["mysql"]
         self.connection = None
-        self._connect()
+        self.connect()
     
-    def _connect(self):
+    def connect(self):
         try:
             self.connection = mysql.connector.connect(
                 host=self.config["host"],
@@ -30,11 +29,11 @@ class ProductDatabase:
             logger.error(f"数据库连接失败: {e}")
             self.connection = None
     
-    def _reconnect_if_needed(self):
+    def reconnect_if_needed(self):
         try:
             if self.connection is None or not self.connection.is_connected():
                 logger.info("重新连接数据库")
-                self._connect()
+                self.connect()
         except Exception as e:
             logger.error(f"重新连接数据库失败: {e}")
     
@@ -54,7 +53,7 @@ class ProductDatabase:
         Returns:
             Dict[str, Any]: 属性名称和值的字典
         """
-        self._reconnect_if_needed()
+        self.reconnect_if_needed()
         result = {}
         
         if not self.connection:
@@ -85,8 +84,8 @@ class ProductDatabase:
             logger.info(f"找到产品ID: {product_id}, 原始产品编号: {original_product_number}")
             
             # 查询材质信息和尺寸信息
-            self._query_material_data(product_id, attributes, result)
-            self._query_size_data(original_product_number, attributes, result)
+            self.query_material_data(product_id, attributes, result)
+            self.query_size_data(original_product_number, attributes, result)
             
             cursor.close()
         
@@ -95,7 +94,7 @@ class ProductDatabase:
         
         return result
     
-    def _query_material_data(self, product_id: int, attributes: List[str], result: Dict[str, Any]) -> None:
+    def query_material_data(self, product_id: int, attributes: List[str], result: Dict[str, Any]) -> None:
         """
         查询产品材质数据
         
@@ -122,10 +121,11 @@ class ProductDatabase:
                 logger.info(f"找到产品材质数据")
                 
                 # 处理材质属性
-                self._process_attributes(attributes, material_row, result, {
+                self.process_attributes(attributes, material_row, result, {
                     "鞋面材质": "upper",
                     "内里材质": "lining",
-                    "鞋底材质": "outsole"
+                    "鞋底材质": "outsole",
+                    "鞋垫材质": "insole"
                 })
             else:
                 logger.warning(f"找不到产品材质数据: product_id={product_id}")
@@ -133,7 +133,7 @@ class ProductDatabase:
         except Exception as e:
             logger.error(f"查询材质数据失败: {e}")
     
-    def _query_size_data(self, original_product_number: str, attributes: List[str], result: Dict[str, Any]) -> None:
+    def query_size_data(self, original_product_number: str, attributes: List[str], result: Dict[str, Any]) -> None:
         """
         查询产品尺寸数据
         
@@ -160,7 +160,7 @@ class ProductDatabase:
                 logger.info(f"找到产品尺寸数据")
                 
                 # 处理尺寸属性
-                self._process_attributes(attributes, size_row, result, {
+                self.process_attributes(attributes, size_row, result, {
                     "后跟高": "heel_height",
                     "靴筒高度": "boot_shaft_height",
                     "鞋跟高度": "heel_height",
@@ -172,7 +172,7 @@ class ProductDatabase:
         except Exception as e:
             logger.error(f"查询尺寸数据失败: {e}")
     
-    def _process_attributes(self, attributes: List[str], row_data: Dict[str, Any], 
+    def process_attributes(self, attributes: List[str], row_data: Dict[str, Any], 
                            result: Dict[str, Any], field_mapping: Dict[str, str]) -> None:
         """
         处理属性数据，从数据行中提取属性值到结果字典
@@ -209,7 +209,7 @@ class ProductDatabase:
         Returns:
             List[str]: 该属性的所有已知值
         """
-        self._reconnect_if_needed()
+        self.reconnect_if_needed()
         results = []
         
         if not self.connection:
@@ -222,11 +222,13 @@ class ProductDatabase:
                 "鞋面材质": "upper",
                 "内里材质": "lining",
                 "鞋底材质": "outsole",
+                "鞋垫材质": "insole",
                 "闭合方式": "closure_type",
                 "鞋头款式": "toe_shape",
                 "后跟高": "heel_height",
                 "靴筒高度": "tube_height",
                 "鞋跟高度": "heel_height",
+                "鞋跟款式": "heel_shape",
             }
             
             # 尝试找到对应的字段名
@@ -244,11 +246,11 @@ class ProductDatabase:
             
             for table_name in tables_to_check:
                 # 检查字段是否存在
-                field_exists = self._check_field_exists(table_name, safe_field_name)
+                field_exists = self.check_field_exists(table_name, safe_field_name)
                 
                 if field_exists:
                     # 获取该表中的所有不同值
-                    values = self._get_distinct_values(table_name, safe_field_name)
+                    values = self.get_distinct_values(table_name, safe_field_name)
                     
                     # 添加到结果中
                     for value in values:
@@ -267,7 +269,7 @@ class ProductDatabase:
         
         return results
     
-    def _check_field_exists(self, table_name: str, field_name: str) -> bool:
+    def check_field_exists(self, table_name: str, field_name: str) -> bool:
         """检查表中是否存在该字段"""
         try:
             query = f"""
@@ -288,7 +290,7 @@ class ProductDatabase:
             logger.error(f"检查字段失败: {e}")
             return False
     
-    def _get_distinct_values(self, table_name: str, field_name: str) -> List[str]:
+    def get_distinct_values(self, table_name: str, field_name: str) -> List[str]:
         try:
             query = f"""
             SELECT DISTINCT `{field_name}` AS value
