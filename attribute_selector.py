@@ -154,12 +154,12 @@ class AttributeSelector:
     
     def is_material_attribute(self, attribute_name: str) -> bool:
         """判断是否为材质相关属性"""
-        material_keywords = ["材质", "面料", "帮面", "靴筒","鞋垫材质", "鞋底材质"]
+        material_keywords = ["材质", "面料", "帮面","鞋垫材质", "鞋底材质"]
         return any(keyword in attribute_name for keyword in material_keywords)
     
     def is_size_attribute(self, attribute_name: str) -> bool:
         """判断是否为尺寸相关属性"""
-        size_keywords = ["高度", "厚度", "后跟高", "靴筒高", "鞋跟高"]
+        size_keywords = ["高度", "厚度", "后跟高", "靴筒高", "鞋跟高", "鞋帮高度"]
         return any(keyword in attribute_name for keyword in size_keywords)
     
     def is_closure_attribute(self, attribute_name: str) -> bool:
@@ -277,7 +277,7 @@ class AttributeSelector:
                     if field in product_data:
                         size_value = product_data[field]
                         break
-        logger.info(f"尺寸相关属性处理结果: {size_value}")
+        logger.info(f"尺寸相关属性处理结果: {product_data}:{size_value}")
         # 如果数据库中没有找到尺寸数据,尝试使用图像识别
         if size_value == None:
             logger.info("数据库中未找到尺寸数据,尝试使用图像识别")
@@ -381,9 +381,8 @@ class AttributeSelector:
         # 使用图像分析获取鞋款
         shoe_shape = analyze_image(image_path, "shoe_shape")
         if shoe_shape:
-            logger.info(f"图像分析获取到的鞋款: {shoe_shape}")
-            if shoe_shape in available_values:
-                return shoe_shape
+            logger.info(f"图像分析获取到的款式: {shoe_shape}")
+            return find_best_value_match(shoe_shape, available_values)
         return ""
     
 

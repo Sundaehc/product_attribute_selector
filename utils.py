@@ -61,12 +61,12 @@ def analyze_image(image_path: str, analysis_type: str) -> str:
         # 根据分析类型构建提示词
         prompts = {
             "closure_type": "这双鞋的闭合方式是什么（如系带、拉链、一脚蹬、魔术贴等)？请只回答闭合方式，不要有其他内容。",
-            "shoe_toe_style": "这双鞋的鞋头款式是什么（如圆头、尖头、方头等）？请只回答鞋头款式，不要有其他内容。",
+            "shoe_toe_style": "这双鞋的鞋头款式是什么（如圆头、尖头、方头、鱼嘴、杏头等）？请只回答鞋头款式，不要有其他内容。",
             "heel_shape": "这双鞋的鞋跟款式是什么（如平跟、圆跟、方跟、尖跟、马蹄跟、坡跟、松糕跟、防水台等）？请只回答鞋跟款式，不要有其他内容。",
             "heel_height": "这双鞋的鞋跟高度是多少（如低跟，平跟、中跟，高跟，超高跟等）？请只回答鞋跟高度，不要有其他内容。",
             "opening_depth": "这双鞋的开口深度是多少（如浅口，中口，深口）？请只回答开口深度，不要有其他内容",
-            "style": "这双鞋的风格是什么（如少女风，田园风，民族风，休闲风，极简风，嘻哈风，洛丽塔风，公主风，舒适等）？请只回答风格，不要有其他内容。",
-            "shoe_shape": "这双鞋的款式是什么（如丁字鞋，布鞋，豆豆鞋，板鞋，穆勒鞋，玛丽珍鞋，懒人鞋，乐福鞋，摇摇鞋等）？请只回答款式，不要有其他内容。"
+            "style": "这双鞋的风格是什么（如少女风，田园风，民族风，休闲风，极简风，嘻哈风，洛丽塔风，公主风，舒适，性感风等）？请只回答风格，不要有其他内容。",
+            "shoe_shape": "这双鞋的款式是什么（如布鞋,单鞋,乐福鞋,豆豆鞋,穆勒鞋,牛津鞋,时尚休闲鞋,松糕鞋,摇摇鞋,休闲板鞋,帆布鞋,高帮鞋,方根高跟鞋,坡跟鞋,细跟高跟鞋,洞洞鞋,时尚休闲沙滩鞋,时装凉鞋,时尚雪地靴,雨鞋,包头拖,人字拖,一字拖, 弹力靴,袜靴,短靴,马丁靴,切尔西靴,时装靴等）？请只回答款式，不要有其他内容。"
         }
         
         prompt = prompts.get(analysis_type, "描述这张图片的主要特征，请简洁回答。")
@@ -104,17 +104,17 @@ def find_best_value_match(query_value: str, available_values: List[str], attribu
         for standard_value, aliases in value_map.items():
             if query_value in aliases and standard_value in available_values:
                 return standard_value
-            
             # 检查部分匹配
             for alias in aliases:
                 if alias in query_value and standard_value in available_values:
                     return standard_value
     # 使用LLM进行语义匹配
     prompt = f"""
-    在以下选项中，找出与"{query_value}"语义最接近或最相关的一项, 如果"{query_value}"在以下选项中，请直接返回"{query_value}"，不要返回其他内容：
+    在以下选项中，找出与"{query_value}"语义最接近或最相关的一项：
     {', '.join(available_values)}
-    
-    请直接返回最匹配的选项，不要有其他内容。
+    如果是"{query_value}"是数字，请直接返回与"{query_value}"匹配的鞋跟高度选项，低跟是1-3cm，中跟是3-5cm，高跟是6-8cm，超高跟是8cm以上，平跟是小于1cm；
+    如果"{query_value}"在选项中，请直接返回"{query_value}"；
+    请直接返回最匹配的选项，不要返回其他多余内容。
     """
     
     matched_value = call_llm(prompt)
