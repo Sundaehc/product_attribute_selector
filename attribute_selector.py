@@ -123,6 +123,7 @@ class AttributeSelector:
             selected_value = ""
         
         logger.info(f"最终选择的属性值: {selected_value}")
+        print("*"*50)
         return [product_number, selected_value]
     
     def find_standard_attribute(self, attribute_name: str) -> str:
@@ -237,6 +238,8 @@ class AttributeSelector:
             material = product_data["鞋底材质"]
         elif "帮面材质" in product_data:
             material = product_data["帮面材质"]
+        elif "内里材质" in product_data:
+            material = product_data["内里材质"]
         elif "材质" in product_data:
             material = product_data["材质"]
         logger.info(f"材质相关属性处理结果: {material}")
@@ -244,7 +247,7 @@ class AttributeSelector:
             # 提取主要材质（如果有多种材质）
             primary_material = extract_primary_material(material)
             # 在可用值中找到最匹配的
-            return find_best_value_match(primary_material, available_values, "材质")
+            return find_best_value_match(primary_material, available_values)
         
         return ""
     def process_size_attribute(self, product_number: str, attribute_name: str, available_values: List[str], image_path: Optional[str] = None) -> str:
