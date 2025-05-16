@@ -110,14 +110,12 @@ def find_best_value_match(query_value: str, available_values: List[str], attribu
                     return standard_value
     # 使用LLM进行语义匹配
     prompt = f"""
-    在以下选项中，找出与"{query_value}"语义最接近或最相关的一项：
-    {', '.join(available_values)}
-    如果是"{query_value}"是数字，请直接返回与"{query_value}"匹配的鞋跟高度选项，低跟是1-3cm，中跟是3-5cm，高跟是6-8cm，超高跟是8cm以上，平跟是小于1cm；
-    如果"{query_value}"在选项中，请直接返回"{query_value}"；
+    给出以下可选值:{','.join(available_values)},找出与{query_value}语义匹配相近或者与{query_value}值相等的选项;
+    如果{query_value}是数字，请直接返回与{query_value}匹配的以下鞋跟高度选项:低跟1-3cm,中跟3cm-5cm,高跟6cm-8cm,超高跟8cm以上,平跟小于1cm;
     请直接返回最匹配的选项，不要返回其他多余内容。
     """
-    
     matched_value = call_llm(prompt)
+    logger.info(f"可选值: {', '.join(available_values)}")
     logger.info(f"查询值: {query_value}")
     logger.info(f"语义匹配结果: {matched_value}")
     # 如果matched_value有多个值，调用模型重新进行语义匹配
@@ -137,7 +135,7 @@ def find_best_value_match(query_value: str, available_values: List[str], attribu
     if matched_value in available_values:
         return matched_value
     else:
-        # 尝试再次匹配或返回第一个选项
+        # 返回空
         return ""
 
 
