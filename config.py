@@ -18,9 +18,22 @@ DB_CONFIG = {
 # API配置
 OPENAI_CONFIG = {
     "api_key": "your_api_key",
-    "default_model": "glm-4",  
-    "vision_model": "glm-4v-plus-0111",  
+    "default_model": "glm-4v-flash",  
+    "vision_model": "glm-4v-flash",  
     "base_url": "https://open.bigmodel.cn/api/paas/v4", 
+}
+
+# 老张API配置
+LAOZHANG_CONFIG = {
+    "api_key": "your_api_key",
+    "default_model": "deepseek-chat",    
+    "base_url": "https://api.laozhang.ai/v1",
+}
+
+# 火山引擎配置
+VOLCENGINE_CONFIG = {
+    "api_key": "your_api_key",
+    "default_model": "deepseek-r1-250120",    
 }
 
 # 日志配置
