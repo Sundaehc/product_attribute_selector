@@ -4,8 +4,8 @@ import time
 import requests
 from openai import OpenAI
 from typing import  Optional, List, Dict, Any
-from config import OPENAI_CONFIG
-
+from config import OPENAI_CONFIG, LAOZHANG_CONFIG, VOLCENGINE_CONFIG
+from volcenginesdkarkruntime import Ark
 logger = logging.getLogger(__name__)
 
 
@@ -147,7 +147,7 @@ def call_openai_llm(prompt: str, system_prompt: str = None, model: str = None) -
     """
     try:
         if model is None:
-            model = OPENAI_CONFIG["default_model"]
+            model = VOLCENGINE_CONFIG["default_model"]
             
         messages = []
         
@@ -158,25 +158,24 @@ def call_openai_llm(prompt: str, system_prompt: str = None, model: str = None) -
         # 添加用户消息
         messages.append({"role": "user", "content": prompt})
         
-        # 初始化客户端
-        client = OpenAI(
-            api_key=OPENAI_CONFIG["api_key"],
-            base_url=OPENAI_CONFIG["base_url"]
+        # 初始化火山引擎客户端
+        client = Ark(
+            api_key=VOLCENGINE_CONFIG["api_key"],
         )
         
         # 发送请求
-        response = client.chat.create(
+        response = client.chat.completions.create(
             model=model,
             messages=messages,
             temperature=0.0,
-            max_tokens=1000
+            max_tokens=1024
         )
         
-        result = response["choices"][0]["message"]["content"]
+        result = response.choices[0].message.content
         return result.strip()
         
     except Exception as e:
-        logger.error(f"OpenAI调用失败: {e}")
+        logger.error(f"火山引擎调用失败: {e}")
         return ""
 
 
@@ -219,11 +218,11 @@ def analyze_image_with_openai(image_path: str, prompt: str) -> str:
             base_url=OPENAI_CONFIG["base_url"]
         )
         
-        # 调用OpenAI视觉模型
+        # 调用智谱AI视觉模型
         response = client.chat.create(
             model=OPENAI_CONFIG["vision_model"],
             messages=messages,
-            max_tokens=100
+            max_tokens=1000
         )
         
         result = response["choices"][0]["message"]["content"]
